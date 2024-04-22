@@ -74,6 +74,22 @@ Se o código for executado, vai ser melhor pra você entender o que irei explica
 
 #### Explicações
 _____
+``(char *[]){"ls", NULL}`` é uma criação de uma variável tmporária do tipo ``char*[]`` (igualzinha ao tipo do argv). O mesmo código pode ser substituído por:
+
+```c
+#include <unistd.h> // execve tá aqui ó
+#include <readline/readline.h>
+
+int main(void)
+{
+	char *comando_digitado[] = {"ls", NULL};
+
+	readline("Pastel de Flango: ");
+	execve("/usr/bin/ls", comando_digitado, NULL);
+	return (0);
+}
+```
+
 Bom, o que eu fiz mandar os argumentos que o execve exige:
 
 - O comando que irei executar
