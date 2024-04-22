@@ -19,13 +19,15 @@ Com a cabeça mais calma, bora começar então?
 
 # Importante: O que tem que ser dito, tem que ser dito
 
-Esse começo pode ser um tanto "rude" na forma de ter sido escrito. Mas eu vejo que a ansiedade em cima do projeto pode ser a coisa que mais te atrapalha de avançar e de te fazer entender: ___A 42 não é sobre fazer projetos, é sobre aprender a aprender___. Foque no aprendizado que o projeto vai te trazer. Se você acha ele um monstro, significa que seus conhecimentos serão monstruosos quando você concluir esse projeto.
+Esse começo pode ser um tanto "rude" na forma de ter sido escrito. Mas eu vejo que a ansiedade em cima do projeto pode ser a coisa que mais te atrapalha de avançar no projeto e te atrapalha em te fazer entender: ___A 42 não é sobre fazer projetos, é sobre aprender a aprender___. 
+
+Foque no aprendizado que o projeto vai te trazer. Se você acha ele um monstro, significa que seus conhecimentos serão monstruosos quando você concluir esse projeto.
 
 Nessa fase da vida, uma última coisa tem que ser dita: ``leia manuais``. Na fase 3 os manuais podem ser a diferença entre ``fazer um projeto bom, rápido e entendendo tudo`` e ``sofrer muito tempo no projeto e entender pouco do que você está fazendo``. Por isso, se acostume rápido, leia os manuais do projeto, RTFM! Se você não entende, leia de novo com ajuda. Depois leia sozinho(a) novamente.
 
 # Bora finalmente!
 
-Bom, aqui estamos, muitas coisas pra ver e nenhuma ideia do que tem que ser feito. Só sabemos que o bash tem que ser minimamente reproduzido (sim, minimamente. É MINI-shell).
+Bom, aqui estamos, muitas coisas pra ver e nenhuma idéia do que tem que ser feito. Só sabemos que o bash tem que ser minimamente reproduzido (sim, minimamente. É MINI-shell).
 
 
 Eis uma luz: a readline vai te dar o respiro inicial que você precisa e será o nosso ponto de partida. Quer ver o como? Toma um exemplo:
@@ -47,7 +49,7 @@ cc file.c -l readline
 
 Pode testar com a flag antes e ver o que ocorre. (O pc não explode, eu garanto).
 
-Execute e veja a mágica que ocorre. Você acabou de começar seu projeto do minshell. Yay! \o/
+Execute e veja a mágica que ocorre. Você acabou de começar seu projeto do minshell. Yay! 🎉🎊 \o/ 👏👏👏
 
 ________
 ### Um pequeno passo para o projeto, um grande passo para um Human Coder
@@ -82,15 +84,15 @@ _____
 
 int main(void)
 {
-	char *comando_digitado[] = {"ls", NULL};
+	char *argumentos_do_comando[] = {"ls", NULL};
 
 	readline("Pastel de Flango: ");
-	execve("/usr/bin/ls", comando_digitado, NULL);
+	execve("/usr/bin/ls", argumentos_do_comando, NULL);
 	return (0);
 }
 ```
 
-Bom, o que eu fiz mandar os argumentos que o execve exige:
+Bom, o que eu fiz foi mandar os argumentos que o execve exige:
 
 - O comando que irei executar
 - Os argumentos do comando _(Basicamente, é o que você digita no terminal)_.
@@ -120,8 +122,18 @@ Vamos apenas trocar o protótipo da main. Se você executar agora, vai perceber 
 
 int main(int argc, char *argv[], char *envp[])
 {
+	char *argumentos_do_comando[] = {"ls", NULL};
+
 	readline("Pastel de Flango: ");
-	execve("/usr/bin/ls", (char *[]){"ls", NULL}, NULL);
+	execve("/usr/bin/ls", argumentos_do_comando, NULL);
 	return (0);
 }
 ```
+
+Da mesma forma que o programa coloca os valores no __argc__ e no __argv__ sem que você tenha que fazer nada. A variável __envp__ será inicializada automaticamente pelo sistema. Você só tem que usar a variável.
+
+E conforme o manual do execve, você vai perceber que o envp é o terceiro argumento. Coloque ele no código, você verá que o programa executa da mesma forma.
+
+___
+__Entendi até aqui, mas o meu programa só executa um ls e para. O que eu digito não importa?__
+___
