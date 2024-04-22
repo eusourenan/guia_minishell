@@ -76,7 +76,9 @@ Se o código for executado, vai ser melhor pra você entender o que irei explica
 
 #### Explicações
 _____
-``(char *[]){"ls", NULL}`` é uma criação de uma variável tmporária do tipo ``char*[]`` (igualzinha ao tipo do argv). O mesmo código pode ser substituído por:
+``(char *[]){"ls", NULL}`` é uma criação de uma variável tmporária do tipo ``char*[]`` (igualzinha ao tipo do argv). Coloquei os colchetes porque se fosse ``char **`` daria erro na hora de compilar. No fim, é apenas uma variável e só.
+
+O mesmo código pode ser substituído por:
 
 ```c
 #include <unistd.h> // execve tá aqui ó
@@ -84,7 +86,8 @@ _____
 
 int main(void)
 {
-	char *argumentos_do_comando[] = {"ls", NULL};
+	// char *argumentos_do_comando[] = {"ls", NULL}; // Esse é o correto
+	char **argumentos_do_comando = {"ls", NULL}; // Teste com esse para ver a diferença
 
 	readline("Pastel de Flango: ");
 	execve("/usr/bin/ls", argumentos_do_comando, NULL);
@@ -137,3 +140,131 @@ E conforme o manual do execve, você vai perceber que o envp é o terceiro argum
 ___
 __Entendi até aqui, mas o meu programa só executa um ls e para. O que eu digito não importa?__
 ___
+
+Nesse exato momento do aprendizado, não importa. Sua readline pega um texto e o execve não tá nem aí pro texto, ele sempre vai executar o ls.
+
+Para conseguir usar melhor a readline, temos que aprender a pegar o retorno dela. Para isso, o manual diz tudo: a função readline retorna o que você digitou como um ``char *``.
+
+O novo código fica assim então:
+
+```c
+#include <stdio.h> // Bora usar printf!!!
+#include <unistd.h> // execve tá aqui ó
+#include <readline/readline.h>
+
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	*argumentos_do_comando[] = {"ls", NULL};
+
+	retorno_readline = readline("Pastel de Flango: ");
+	printf("Isso é o que a readline retornou: %s\n", retorno_readline);
+	printf("-------------\n"); // print estético apenas (fica melhor pra separar o que é o quê).
+	execve("/usr/bin/ls", argumentos_do_comando, NULL);
+	return (0);
+}
+```
+
+Executamos o código e "ó só!". A readline retorna certinho o que digitamos.
+
+Um detalhe para ser reparado é que a linha é retornada pra você sem um ``\n`` no final dela, apenas o ``\0`` de praxe. Você não tem que se preocupar com algum caracter diferenciado no meio do caminho. (ufa...!)
+___
+__Quero aproveitar a farra e juntar tudo. Como juntar a readline com o execve?__
+___
+
+Bem simplão. Faz o seguinte:
+- splitar o retorno da readline por espaços. Afinal, o segundo parâmetro (que é o que você digita no terminal) é do tipo ``char *``, porém o execve pega o seu segundo argumento como ``char **``. A split resolve esse problema pra nós, por enquanto.
+
+Split feita, basta usarmos o nosso comando splitado como argumento.
+
+Para fins didáticos, irei apenas apagar o ``{"ls", NULL}`` da variável _argumentos_do_comando_ e utilizarei a mesma variável para receber o retorno da split.
+
+Com isso dito, nosso código agora está assim:
+
+```c
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	**argumentos_do_comando;
+
+	retorno_readline = readline("Pastel de Flango: ");
+	printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
+	
+	// O que foi acrescentado
+	argumentos_do_comando = ft_split(retorno_readline, ' ');
+	printf("Foi tudo picotado!\n");
+	
+	
+	printf("-------------\n"); // print estético apenas (fica melhor pra separar o que é o quê).
+	execve("/usr/bin/ls", argumentos_do_comando, NULL);
+	return (0);
+}
+```
+
+Veja que maravilha! Você consegue executar o comando ls da forma que você quiser agora! 🥳🥳🥳
+
+Tá sentindo o progresso?! Antes você tinha zero projeto, agora você já está executando o comando ls de tudo quanto é jeito. Parabéns! 👏👏👏👏👏👏👏
+
+Vamos para o próximo passo então?
+
+___
+### Execve executando o outros comandos, não apenas o ls
+
+Vamos direto pro código que nos parece mais natural pensar, depois para as explicações:
+
+```c
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	**argumentos_do_comando;
+
+	retorno_readline = readline("Pastel de Flango: ");
+	printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
+	
+	// O que foi acrescentado
+	argumentos_do_comando = ft_split(retorno_readline, ' ');
+	printf("Foi tudo picotado!\n");
+	
+	
+	printf("-------------\n"); // print estético apenas (fica melhor pra separar o que é o quê).
+	execve(argumentos_do_comando[0], argumentos_do_comando, NULL);
+	return (0);
+}
+```
+
+Quando digitamos o comando, bem... a primeira coisa é o comando, certo?
+
+Bora testar esse código! Afinal, ele compila de boa.
+
+___
+### E aê tiozão! Tá tirando?!
+
+Não, não estou zoando contigo, mas deixando claro que não basta pegar o que vem da readline de qualquer jeito e mandar para o execve. O primeiro argumento tem que ser o caminho completo do executável.
+
+Execute o comando assim:
+```
+/usr/bin/ls -l
+```
+
+Você vai perceber que o execve executou seu comando lindamente.
+
+Repito: o primeiro argumento do execve é o caminho inteiro de onde o comando está escondido.
+
+Quando executamos coisas no bash, ele completa o pedaço do caminho que falta. Depois de fazer o caminho ficar completo é que ele manda o argumento para o execve executar.
+
+Como a maioria dos comandos que você conhece está na pasta ``/usr/bin/`` você pode começar qualquer comando assim, com as flags que você conhece que o execve vai executar de boa.
+
+```
+Caso você queira facilitar um pouco seus testes, você pode só colocar /bin/comando_qualquer.
+
+/bin é uma pasta com um link simbólico pra /usr/bin. Dá para executar comandos com menos digitação.
+```
+
+# Pausa pra conferir o progresso!
+
+Percebeu que suas dúvidas mudaram? Agora é algo do tipo: "Como eu vou fazer pra colocar o diretório antes do nome do comando?" Caramba! Quanto progresso! 👏👏👏👏👏
+
+Tome uma água, estique as pernas e sinta o quanto você já entendeu do começo (ler o comando) e do final (executar o comando).
+
+Esse projeto tem 1 mês e meio, você está aqui há alguns minutos e já aprendeu bastante. Seu cérebro merece uma pausa.
+
