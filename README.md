@@ -110,7 +110,7 @@ Esses são comandos que você pode executar à vontade com o execve.
 
 __Os argumentos__ são o que você digita no terminal, literalmente qualquer comando que você digita. Eles vêm no formato array de arrays igual ao nosso já conhecido ``argv da main`` (por isso que chamei de argumentos).
 
-__Envp__: O terceiro argumento são as variáveis de ambiente. Se você não sabe o que é isso, execute o comando ``env`` no seu terminal e ele vai te mostrar o que são elas.
+__Variáveis de ambiente__: O terceiro argumento são as variáveis de ambiente. Se você não sabe o que é isso, execute o comando ``env`` no seu terminal e ele vai te mostrar o que são elas.
 
 - Você não precisa implementar nada pra ter esses valores, a função __main__ vai dar eles pra você. Irei explicar como.
 
@@ -182,6 +182,11 @@ Para fins didáticos, irei apenas apagar o ``{"ls", NULL}`` da variável _argume
 Com isso dito, nosso código agora está assim:
 
 ```c
+#include "libft.h" // Afinal, a gente não criou ela pra nada
+#include <stdio.h>
+#include <unistd.h>
+#include <readline/readline.h>
+
 int main(int argc, char *argv[], char *envp[])
 {
 	char	*retorno_readline;
@@ -195,7 +200,7 @@ int main(int argc, char *argv[], char *envp[])
 	printf("Foi tudo picotado!\n");
 	
 	
-	printf("-------------\n"); // print estético apenas (fica melhor pra separar o que é o quê).
+	printf("-------------\n");
 	execve("/usr/bin/ls", argumentos_do_comando, NULL);
 	return (0);
 }
@@ -213,6 +218,11 @@ ___
 Vamos direto pro código que nos parece mais natural pensar, depois para as explicações:
 
 ```c
+#include "libft.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <readline/readline.h>
+
 int main(int argc, char *argv[], char *envp[])
 {
 	char	*retorno_readline;
@@ -221,13 +231,12 @@ int main(int argc, char *argv[], char *envp[])
 	retorno_readline = readline("Pastel de Flango: ");
 	printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
 	
-	// O que foi acrescentado
 	argumentos_do_comando = ft_split(retorno_readline, ' ');
 	printf("Foi tudo picotado!\n");
 	
 	
-	printf("-------------\n"); // print estético apenas (fica melhor pra separar o que é o quê).
-	execve(argumentos_do_comando[0], argumentos_do_comando, NULL);
+	printf("-------------\n"); 
+	execve(argumentos_do_comando[0], argumentos_do_comando, NULL); // Mudamos o primero argumento pra ser o comando ora!
 	return (0);
 }
 ```
