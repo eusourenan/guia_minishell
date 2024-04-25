@@ -200,7 +200,7 @@ Nesse caso, não houve execução e a mensagem foi printada na tela. Isso aconte
 
 - Ou ele __executa__ o comando porque está tudo certo e mata o programa em execução.
 
-- Ou ele __não executa__ e o programa executa normalmente.
+- Ou ele __não executa__ e o programa continua normalmente.
 
 No manual, o programa vai ter o nome __``processo``__ que é o nome técnico mais correto. Por isso, irei chamar nosso programa de processo daqui pra frente.
 
@@ -217,6 +217,9 @@ Agora sim! Basta fazer o clone executar e o clone é o que morre.
 Vamos usar o nosso programa bem simples como exemplo:
 
 ```c
+#include <stdio.h>
+#include <unistd.h>
+
 int main(int argc, char *argv[], char *envp[])
 {
 	int retorno_do_fork;
@@ -260,7 +263,8 @@ int main(int argc, char *argv[], char *envp[])
 		argumentos_do_comando = ft_split(retorno_readline, ' ');
 		printf("Foi tudo picotado!\n");
 		
-		retorno_do_fork = fork(); // Vou colocar aqui pra facilitar pro futuro, mas você pode deixar coladinho com o execve, caso queira (não afeta em nada o que fazemos por hora)
+		retorno_do_fork = fork(); // Vou colocar aqui pra facilitar pro futuro
+		// mas você pode deixar coladinho com o execve, caso queira (não afeta em nada o que fazemos por hora)
 
 		if (retorno_do_fork == 0)
 		{
@@ -275,11 +279,15 @@ int main(int argc, char *argv[], char *envp[])
 }
 ```
 
-O código está ganhando forma, mas como diz a frase: Com grandes poderes...
+O código está ganhando forma, mas como diz a frase: 
 
-Existem erros que podem acontecer com essa criação e execução de processos. E o mais rápido de perceber é: e se o comando que eu digitar for inválido e o clone continuar a execução?
+____
+__Com grandes poderes...__
+____
 
-Existe até um nome pra isso __processo zumbi__. Basicamente, é um processo clone que você deixou rodar pelo sistema e que continua rodando mesmo quando seu processo original já acabou de executar.
+Existem erros que podem acontecer com essa criação e execução de processos. O erro mais rápido de perceber é: e se o comando que eu digitar for inválido e o clone continuar a execução?
+
+Existe até um nome pra isso __processo zumbi__. Basicamente, é um processo clone que __você__ deixou rodar pelo sistema e que continua rodando mesmo quando seu processo original já acabou de executar.
 
 Sim, você será o(a) principal responsável se um processo zumbi acontecer. Afinal, o fork não se faz sozinho.
 
@@ -377,7 +385,7 @@ int main(int argc, char *argv[], char *envp[])
 }
 ```
 
-No código acima pedimos para o processo original esperar um pouco. Daí o clone executa e ta-dam! O código funciona lindamente.
+No código acima pedimos para o processo original esperar um pouco. Daí o clone executa e... ta-dam! O código funciona lindamente.
 
 _____
 __Nomes técnicos__
@@ -385,8 +393,12 @@ ____
 
 Para concluir esse ponto, sabe o processo original e o processo clone? Eles são chamados de processo pai e processo filho.
 
-Pai porque começou o programa com ele, filho porque ele foi gerado com o fork. É assim que você achará mais coisas na internet e conseguirá se comunicar com os parceiros na hora de falar sobre códigos.
+- Pai porque o programa começou com ele (primeiro o pai).
+- Filho porque ele foi gerado com o fork (depois o filho).
 
+É assim que você achará mais coisas na internet e conseguirá se comunicar com os parceiros na hora de falar sobre códigos.
+
+Concluímos então a segunda parte.
 
 # Co-me-mo-ra-ção 🥳🥳🥳
 
