@@ -32,7 +32,8 @@ Bem, o envp é um ponteiro com ``environment variables`` (variáveis de ambiente
 
 Sem enrolar mais, vamos para as explicações.
 
-- Todas as variáveis são escritas no padrão __``nome=valor``__. Por exemplo, se eu tivesse uma variável para dizer uma comida, a variável seria algo como __``COMIDA=BOLO DE CHOCOLATE``__.
+- Todas as variáveis são escritas no padrão __```nome=valor```__. Por exemplo, se eu tivesse uma variável para dizer uma comida, a variável seria algo como __``COMIDA=BOLO DE CHOCOLATE``__.
+
 - O campo __nome__ segue as mesmas regras de nomes de variável na linguagem C:
 	- não pode ter caracteres especiais;
 	- têm que começar com letra, ou _;
