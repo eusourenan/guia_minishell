@@ -270,7 +270,7 @@ int main(int argc, char *argv[], char *envp[])
 		}
 
 		printf("-------------\n");// O processo original é que separa o print na tela agora.
-	}	
+	}
 	return (0);
 }
 ```
@@ -316,7 +316,7 @@ int main(int argc, char *argv[], char *envp[])
 		}
 
 		printf("-------------\n");
-	}	
+	}
 	return (0);
 }
 ```
@@ -372,7 +372,7 @@ int main(int argc, char *argv[], char *envp[])
 		}
 		wait(NULL);// Pare! Até quando você quer mandar e mudar minha vida?...
 		printf("-------------\n");
-	}	
+	}
 	return (0);
 }
 ```
