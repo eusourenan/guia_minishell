@@ -54,7 +54,11 @@ Execute e veja a mágica que ocorre. Você acabou de começar seu projeto do min
 ________
 ### Um pequeno passo para o projeto, um grande passo para um Human Coder
 
-Caso você tenha executado (se não fez isso, executa... tô esperando...) você vai perceber que ele simplesmente espera você dar um enter e o programa acaba. Mas ele fica lá paradinho. (Que coisa mais linda 😆💖).
+Caso você tenha executado (se não fez isso, executa... tô esperando...) você vai perceber que ele simplesmente espera.
+
+Você pode digitar e apagar coisas, e quando der um enter o programa acaba. Mas ele fica lá paradinho. (Que coisa mais linda 😆💖).
+
+Você pode trocar "__Pastel de Flango__" por qualquer outro texto e ver o comportamento. Essa string é o texto de prompt do seu bash. 
 
 Com isso, a dificuldade de imaginar como o prompt ficaria parado na tela esperando um comando está resolvida. Mas, como executo um comando? (Se você fez minitalk também).
 
@@ -76,7 +80,7 @@ Se o código for executado, vai ser melhor pra você entender o que irei explica
 
 #### Explicações
 _____
-``(char *[]){"ls", NULL}`` é uma criação de uma variável tmporária do tipo ``char*[]`` (igualzinha ao tipo do argv). Coloquei os colchetes porque se fosse ``char **`` daria erro na hora de compilar. No fim, é apenas uma variável e só.
+``(char *[]){"ls", NULL}`` é uma criação de uma variável temporária do tipo ``char*[]`` (igualzinha ao tipo do argv). Coloquei os colchetes porque se fosse ``char **`` daria erro na hora de compilar. No fim, é apenas uma variável e só.
 
 O mesmo código pode ser substituído por:
 
@@ -101,14 +105,18 @@ Bom, o que eu fiz foi mandar os argumentos que o execve exige:
 - Os argumentos do comando _(Basicamente, é o que você digita no terminal)_.
 - Variáveis de ambiente (falarei delas mais tarde).
 
-__O comando__ que você executa é um executável (igual ao nosso amigo __a.out__). Esse comando está na pasta ``/bin/usr/``. Para checar alguns dos comandos, execute isso no terminal:
+__O comando__ que você executa é um executável (igual ao nosso amigo __a.out__). Esse comando está na pasta ``/bin/usr/``. e o nome dele é __ls__ ao invés de a.out.
+
+Esse é o primeiro argumento do execve, o caminho completo do comando.
+
+Para checar alguns dos comandos, execute isso no terminal:
 
 ```sh
 ls /usr/bin
 ```
 Esses são comandos que você pode executar à vontade com o execve.
 
-__Os argumentos__ são o que você digita no terminal, literalmente qualquer comando que você digita. Eles vêm no formato array de arrays igual ao nosso já conhecido ``argv da main`` (por isso que chamei de argumentos).
+__Os argumentos__ são o que você digita no terminal, literalmente qualquer comando que você digita. Eles vêm no formato array de arrays igual ao nosso já conhecido __``argv da main``__ (por isso que chamei de argumentos).
 
 __Variáveis de ambiente__: O terceiro argumento são as variáveis de ambiente. Se você não sabe o que é isso, execute o comando ``env`` no seu terminal e ele vai te mostrar o que são elas.
 
@@ -123,7 +131,7 @@ Vamos apenas trocar o protótipo da main. Se você executar agora, vai perceber 
 #include <unistd.h> // execve tá aqui ó
 #include <readline/readline.h>
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[], char *envp[]) // olha a main alterada aqui ó
 {
 	char *argumentos_do_comando[] = {"ls", NULL};
 
@@ -173,7 +181,7 @@ __Quero aproveitar a farra e juntar tudo. Como juntar a readline com o execve?__
 ___
 
 Bem simplão. Faz o seguinte:
-- splitar o retorno da readline por espaços. Afinal, o segundo parâmetro (que é o que você digita no terminal) é do tipo ``char *``, porém o execve pega o seu segundo argumento como ``char **``. A split resolve esse problema pra nós, por enquanto.
+- splitar o retorno da readline por espaços. Afinal, o retorno da readline (que é o que você digita no terminal) é do tipo ``char *``, porém o execve pega o seu segundo argumento como ``char **``. A split resolve esse problema pra nós, por enquanto.
 
 Split feita, basta usarmos o nosso comando splitado como argumento.
 
@@ -194,17 +202,19 @@ int main(int argc, char *argv[], char *envp[])
 
 	retorno_readline = readline("Pastel de Flango: ");
 	printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
-	
+
 	// O que foi acrescentado
 	argumentos_do_comando = ft_split(retorno_readline, ' ');
 	printf("Foi tudo picotado!\n");
-	
-	
+
+
 	printf("-------------\n");
 	execve("/usr/bin/ls", argumentos_do_comando, NULL);
 	return (0);
 }
 ```
+
+Digite __``ls -l``__ na hora do comando. E que tal __``ls -la``__? Ele está fazendo o ls de várias formas, e pega exatamente o que você digita! 
 
 Veja que maravilha! Você consegue executar o comando ls da forma que você quiser agora! 🥳🥳🥳
 
@@ -250,7 +260,7 @@ ___
 
 Não, não estou zoando contigo, mas deixando claro que não basta pegar o que vem da readline de qualquer jeito e mandar para o execve. O primeiro argumento tem que ser o caminho completo do executável.
 
-Execute o comando assim:
+Execute o comando assim na readline:
 ```
 /usr/bin/ls -l
 ```
@@ -259,7 +269,7 @@ Você vai perceber que o execve executou seu comando lindamente.
 
 Repito: o primeiro argumento do execve é o caminho inteiro de onde o comando está escondido.
 
-Quando executamos coisas no bash, ele completa o pedaço do caminho que falta. Depois de fazer o caminho ficar completo é que ele manda o argumento para o execve executar.
+Quando executamos os comandos (tipo: __``ls -a``__) no bash, ele completa o pedaço do caminho que falta. Depois de fazer o caminho ficar completo é que ele manda o argumento para o execve executar.
 
 Como a maioria dos comandos que você conhece está na pasta ``/usr/bin/`` você pode começar qualquer comando assim, com as flags que você conhece que o execve vai executar de boa.
 
