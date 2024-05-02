@@ -258,10 +258,8 @@ int main(int argc, char *argv[], char *envp[])
 	while (42) // Agora vai Gerson!
 	{
 		retorno_readline = readline("Pastel de Flango: ");
-		printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
 		
 		argumentos_do_comando = ft_split(retorno_readline, ' ');
-		printf("Foi tudo picotado!\n");
 		
 		retorno_do_fork = fork(); // Vou colocar aqui pra facilitar pro futuro
 		// mas você pode deixar coladinho com o execve, caso queira (não afeta em nada o que fazemos por hora)
@@ -308,10 +306,8 @@ int main(int argc, char *argv[], char *envp[])
 	while (42)
 	{
 		retorno_readline = readline("Pastel de Flango: ");
-		printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
 		
 		argumentos_do_comando = ft_split(retorno_readline, ' ');
-		printf("Foi tudo picotado!\n");
 		
 		retorno_do_fork = fork();
 
@@ -364,10 +360,8 @@ int main(int argc, char *argv[], char *envp[])
 	while (42)
 	{
 		retorno_readline = readline("Pastel de Flango: ");
-		printf("Isso é o que a readline retornou: %s\n\n", retorno_readline);
 		
 		argumentos_do_comando = ft_split(retorno_readline, ' ');
-		printf("Foi tudo picotado!\n");
 		
 		retorno_do_fork = fork();
 
