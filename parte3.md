@@ -186,4 +186,208 @@ int main(int argc, char *argv[], char *envp[])
 }
 ```
 
-Com isso, executamos comandos digitados com o pipe. Mas, para repassar as informações de um comando para o outro comando, iremos conhecer uma função que é necessátia, além do pipe.
+Com isso, executamos comandos digitados com o pipe. Mas, para repassar as informações de um comando para o outro comando, iremos conhecer uma função que é necessária, além do pipe.
+
+# Dup
+
+Como você pode notar até o momento, dois comandos são executados, mas eles não se comunicam de verdade. O comando 1 não envia dados para o comando 2.
+
+Isso acontece porque quando os comandos são criados para printar o terminal (fd 1 do write).
+
+Os programas não são adaptados para printarem em fds diferentes, como os fds de pipes, por exemplo (se você já codou algo assim, me ensine, please).
+
+Então, os programadores criaram algo para nos ajudar nesse momento de dificuldade, um duplicador de fds.
+
+Em especial, irei falar da função dup2 (leia _``duplicate to``_, "duplique para..." em português).
+
+Essa função duplica qualquer fd que passarmos como argumento para outro fd que definirmos.
+
+Ela é prototipada assim (no manual é diferente):
+```c
+int dup2(int fd1, int fd2)
+```
+
+O que ela faz é substituir o fd2 pelo fd1.
+
+Sim, ela faz o fd2 deixar de existir e coloca o fd1 no lugar dele.
+
+Se fizermos no código
+
+```c
+dup2(all_pipes[1], 1);
+```
+
+É o mesmo que dizer que ``write(1, "oi", 2)`` vira ``write(all_pipes[1], "oi", 2)``.
+
+O código continua igual, mas o write printa no pipe em vez de printar no terminal. Ali só foi uma demonstração do que acontece no comportamento.
+
+Vejamos como fica noss código com isso montado:
+
+```c
+#include "libft.h"
+#include <readline/readline.h>
+#include <stdio.h>
+#include <unistd.h> // O dup também está aqui
+#include <sys/wait.h>
+
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	**comandos;
+	int		retorno_fork;
+	int		all_pipes[2]; // Para uma execução simples
+
+	while (42)
+	{
+		retorno_readline = readline("Prompt$ ");
+		comandos = ft_split(retorno_readline, '|');
+
+
+		// crio os pipes se tenho 2 comandos
+		if (comandos[1] != NULL)
+		{
+			pipe(all_pipes);
+		}
+
+		/******* Execução do primeiro comando *******/
+		retorno_fork = fork();
+
+		if (retorno_fork == 0)
+		{
+			char	**comando_picotado = ft_split(comandos[0], ' ');
+
+			// sua ideia pra ter o comando com o caminho inteiro
+
+			
+			if (comandos[1] != NULL)
+			{
+				// Faço a troca do fd 1 pelo pipe
+				dup2(all_pipes[1], 1);
+			}
+
+
+			execve(comando_picotado[0], comando_picotado, envp);
+			exit(1); // Caso o comando não seja executado
+		}
+		
+		// Agora não existe mais esse wait
+
+		/******* Execução do segundo comando *******/
+		if (comandos[1] != NULL) // Verificação de segurança
+		{
+			retorno_fork = fork();
+
+			if (retorno_fork == 0)
+			{
+				char	**comando_picotado = ft_split(comandos[1], ' ');
+
+				// sua ideia pra ter o comando com o caminho inteiro
+
+				// Leio o que veio do comando anterior
+				dup2(all_pipes[0], 0);
+
+				execve(comando_picotado[0], comando_picotado, envp);
+				exit(1);
+			}
+		}
+	}
+
+	return (0);
+}
+```
+
+E com isso conseguimos fazer com que os programas enviem os dados através do pipe. 🥳🥳🥳🥳
+
+____
+__Para finalizar__
+____
+
+A responsabilidade que você tem com o pipe é a de fechar todos os fds que ficaram abertos. Lembre-se que ``dup`` vem de __duplicate__, seu fd está duplicado, por isso, fechar-lo-emos:
+
+```c
+#include "libft.h"
+#include <readline/readline.h>
+#include <stdio.h>
+#include <unistd.h> // O dup também está aqui
+#include <sys/wait.h>
+
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	**comandos;
+	int		retorno_fork;
+	int		all_pipes[2];
+
+	while (42)
+	{
+		retorno_readline = readline("Prompt$ ");
+		comandos = ft_split(retorno_readline, '|');
+
+
+		// crio os pipes se tenho 2 comandos
+		if (comandos[1] != NULL)
+		{
+			pipe(all_pipes);
+		}
+
+		/******* Execução do primeiro comando *******/
+		retorno_fork = fork();
+
+		if (retorno_fork == 0)
+		{
+			char	**comando_picotado = ft_split(comandos[0], ' ');
+
+			// sua ideia pra ter o comando com o caminho inteiro
+
+			
+			if (comandos[1] != NULL)
+			{
+				// Faço a troca do fd 1 pelo pipe
+				dup2(all_pipes[1], 1);
+
+
+				// Fecho os pipes no primeiro filho
+				// Sempre depois dos dup's
+				close(all_pipes[0]);
+				close(all_pipes[1]);
+			}
+
+
+			execve(comando_picotado[0], comando_picotado, envp);
+			exit(1); // Caso o comando não seja executado
+		}
+		
+
+		/******* Execução do segundo comando *******/
+		if (comandos[1] != NULL) // Verificação de segurança
+		{
+			retorno_fork = fork();
+
+			if (retorno_fork == 0)
+			{
+				char	**comando_picotado = ft_split(comandos[1], ' ');
+
+				// sua ideia pra ter o comando com o caminho inteiro
+
+				// Leio o que veio do comando anterior
+				dup2(all_pipes[0], 0);
+
+				// Fecho no segundo filho
+				close(all_pipes[0]);
+				close(all_pipes[1]);
+
+
+				execve(comando_picotado[0], comando_picotado, envp);
+				exit(1);
+			}
+
+			// Fecho no pai
+			close(all_pipes[0]);
+			close(all_pipes[1]);
+		}
+	}
+	return (0);
+}
+```
+
+Aqui eu te mostrei uma maneira de fazer com que dois comandos sejam executados e que o comando 1 envie informações para o comando 2. Com isso, o assunto sobre pipes está concluído. Você consegue executar 2 comandos!
