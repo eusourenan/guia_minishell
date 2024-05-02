@@ -261,8 +261,8 @@ int main(int argc, char *argv[], char *envp[])
 		
 		argumentos_do_comando = ft_split(retorno_readline, ' ');
 		
-		retorno_do_fork = fork(); // Vou colocar aqui pra facilitar pro futuro
-		// mas você pode deixar coladinho com o execve, caso queira (não afeta em nada o que fazemos por hora)
+		retorno_do_fork = fork(); // Vou colocar aqui por hora
+		// Você vai aprender no futuro a colocar no melhor lugar para o seu código
 
 		if (retorno_do_fork == 0)
 		{
