@@ -390,3 +390,9 @@ int main(int argc, char *argv[], char *envp[])
 ```
 
 Aqui eu te mostrei uma maneira de fazer com que dois comandos sejam executados e que o comando 1 envie informações para o comando 2. Com isso, o assunto sobre pipes está concluído. Você consegue executar 2 comandos!
+
+# E mais um progresso realizado! 🎊🎊🎊🎊
+
+Com essa parte concluída, já é piossível exeutar comandos separados por pipes! Progresso, progresso, progresso! 🥳🥳🥳
+
+O que resta agora é dar uma respirada e beber uma água. Contemplar o que foi feito faz parte da aprendizagem.
