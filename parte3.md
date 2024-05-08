@@ -66,7 +66,7 @@ int main(int argc, char *argv[], char *envp[])
 
 Debaixo dos panos, o pipe cria um arquivo no limbo do pc e te dá dois fds pra acessar. O fd zero apenas tem permissão pra ler, o fd 1 apenas tem permissão pra escrever.
 
-## Exemplo básico para 2 pipes
+## Exemplo básico para 2 comandos
 
 Para executar dois comandos, vamos fazer 2 execve. O primeiro execve para o primeiro comando, o segundo execve para o segundo comando.
 
