@@ -302,7 +302,9 @@ ____
 __Para finalizar__
 ____
 
-A responsabilidade que você tem com o pipe é a de fechar todos os fds que ficaram abertos. Lembre-se que ``dup`` vem de __duplicate__, seu fd está duplicado, por isso, fechar-lo-emos:
+A responsabilidade que você tem com o pipe é a de fechar todos os fds que ficaram abertos. 
+
+Lembre-se que ``dup`` vem de __duplicate__, seu fd está duplicado, por isso, fechar-lo-emos:
 
 ```c
 #include "libft.h"
@@ -324,7 +326,6 @@ int main(int argc, char *argv[], char *envp[])
 		comandos = ft_split(retorno_readline, '|');
 
 
-		// crio os pipes se tenho 2 comandos
 		if (comandos[1] != NULL)
 		{
 			pipe(all_pipes);
@@ -342,7 +343,6 @@ int main(int argc, char *argv[], char *envp[])
 			
 			if (comandos[1] != NULL)
 			{
-				// Faço a troca do fd 1 pelo pipe
 				dup2(all_pipes[1], 1);
 
 
@@ -354,12 +354,12 @@ int main(int argc, char *argv[], char *envp[])
 
 
 			execve(comando_picotado[0], comando_picotado, envp);
-			exit(1); // Caso o comando não seja executado
+			exit(1);
 		}
 		
 
 		/******* Execução do segundo comando *******/
-		if (comandos[1] != NULL) // Verificação de segurança
+		if (comandos[1] != NULL)
 		{
 			retorno_fork = fork();
 
@@ -369,7 +369,6 @@ int main(int argc, char *argv[], char *envp[])
 
 				// sua ideia pra ter o comando com o caminho inteiro
 
-				// Leio o que veio do comando anterior
 				dup2(all_pipes[0], 0);
 
 				// Fecho no segundo filho
