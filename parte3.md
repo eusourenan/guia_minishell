@@ -192,9 +192,9 @@ Com isso, executamos comandos digitados com o pipe. Mas, para repassar as inform
 
 Como você pode notar até o momento, dois comandos são executados, mas eles não se comunicam de verdade. O comando 1 não envia dados para o comando 2.
 
-Isso acontece porque quando os comandos são criados para printar o terminal (fd 1 do write).
+Isso acontece porque os comandos são criados para printar o terminal (fd 1 do write).
 
-Os programas não são adaptados para printarem em fds diferentes, como os fds de pipes, por exemplo (se você já codou algo assim, me ensine, please).
+Os programas não são adaptados para printarem em fds diferentes, como os fds de pipes (se você já codou algo assim, me ensine, please).
 
 Então, os programadores criaram algo para nos ajudar nesse momento de dificuldade, um duplicador de fds.
 
@@ -219,9 +219,11 @@ dup2(all_pipes[1], 1);
 
 É o mesmo que dizer que ``write(1, "oi", 2)`` vira ``write(all_pipes[1], "oi", 2)``.
 
-O código continua igual, mas o write printa no pipe em vez de printar no terminal. Ali só foi uma demonstração do que acontece no comportamento.
+O exemplo acima é apenas um exemplo de comportamento, o código não muda (é sempre ``write(1, "oi", 2)``).
 
-Vejamos como fica noss código com isso montado:
+O código continua igual, mas o write printa no pipe em vez de printar no terminal por causa da alteração feita com a função dup2.
+
+Vejamos como fica nosso código com isso montado:
 
 ```c
 #include "libft.h"
@@ -261,7 +263,8 @@ int main(int argc, char *argv[], char *envp[])
 			
 			if (comandos[1] != NULL)
 			{
-				// Faço a troca do fd 1 pelo pipe
+				// Faço a troca do fd 1 pelo pipe 
+				// (escreve no pipe em vez de escrever no terminal)
 				dup2(all_pipes[1], 1);
 			}
 
@@ -416,7 +419,7 @@ void	executar_1_comando(char *comando, char **envp)
 		execve(argumentos_do_comando[0], argumentos_do_comando, envp);
 		exit(0);
 	}
-	wait(NULL);// Pare! Até quando você quer mandar e mudar minha vida?...
+	wait(NULL);
 }
 
 void	executar_2_comandos(char **comandos, char **envp)
