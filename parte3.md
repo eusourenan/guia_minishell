@@ -124,7 +124,7 @@ int main(int argc, char *argv[], char *envp[])
 }
 ```
 
-Aqui voltamos para uma única execução apenas para que você veja que ele executou 2 comandos ao invés de 1, quando você usou o pipe! \o/
+Aqui retiramos o loop apenas para que você veja que ele executou 2 comandos ao invés de 1, quando você usou o pipe! \o/
 
 Colocando tudo dentro do loop temos:
 
