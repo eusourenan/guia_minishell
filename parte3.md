@@ -270,7 +270,7 @@ int main(int argc, char *argv[], char *envp[])
 			exit(1); // Caso o comando não seja executado
 		}
 		
-		// Agora não existe mais esse wait
+		// Agora não existe mais esse wait porque falta umas coisas
 
 		/******* Execução do segundo comando *******/
 		if (comandos[1] != NULL) // Verificação de segurança
@@ -356,7 +356,7 @@ int main(int argc, char *argv[], char *envp[])
 			execve(comando_picotado[0], comando_picotado, envp);
 			exit(1);
 		}
-		
+		wait(NULL);
 
 		/******* Execução do segundo comando *******/
 		if (comandos[1] != NULL)
@@ -379,7 +379,7 @@ int main(int argc, char *argv[], char *envp[])
 				execve(comando_picotado[0], comando_picotado, envp);
 				exit(1);
 			}
-
+			wait(NULL);
 			// Fecho no pai
 			close(all_pipes[0]);
 			close(all_pipes[1]);
@@ -391,8 +391,115 @@ int main(int argc, char *argv[], char *envp[])
 
 Aqui eu te mostrei uma maneira de fazer com que dois comandos sejam executados e que o comando 1 envie informações para o comando 2. Com isso, o assunto sobre pipes está concluído. Você consegue executar 2 comandos!
 
+## Mudança estética: separar execução simples de execução com 2 comandos
+
+```c
+#include "libft.h"
+#include <readline/readline.h>
+#include <stdio.h>
+#include <unistd.h> // O dup também está aqui
+#include <sys/wait.h>
+
+void	executar_1_comando(char *comando, char **envp)
+{
+	int		retorno_fork;
+	char	**argumentos_do_comando;
+
+	argumentos_do_comando = ft_split(comando, ' ');
+		
+	retorno_fork = fork();
+
+	if (retorno_fork == 0)
+	{
+		// sua ideia pra ter o comando com o caminho inteiro
+		
+		execve(argumentos_do_comando[0], argumentos_do_comando, envp);
+		exit(0);
+	}
+	wait(NULL);// Pare! Até quando você quer mandar e mudar minha vida?...
+}
+
+void	executar_2_comandos(char **comandos, char **envp)
+{
+	int		retorno_fork;
+	int		all_pipes[2];
+
+	pipe(all_pipes);
+
+	/******* Execução do primeiro comando *******/
+	retorno_fork = fork();
+
+	if (retorno_fork == 0)
+	{
+		char	**comando_picotado = ft_split(comandos[0], ' ');
+
+		// sua ideia pra ter o comando com o caminho inteiro
+		
+		dup2(all_pipes[1], 1);
+
+		// Fecho os pipes no primeiro filho
+		// Sempre depois dos dup's
+		close(all_pipes[0]);
+		close(all_pipes[1]);
+
+		execve(comando_picotado[0], comando_picotado, envp);
+		exit(1);
+	}
+	wait(NULL);
+
+	/******* Execução do segundo comando *******/
+	retorno_fork = fork();
+
+	if (retorno_fork == 0)
+	{
+		char	**comando_picotado = ft_split(comandos[1], ' ');
+
+		// sua ideia pra ter o comando com o caminho inteiro
+
+		dup2(all_pipes[0], 0);
+
+		// Fecho no segundo filho
+		close(all_pipes[0]);
+		close(all_pipes[1]);
+
+
+		execve(comando_picotado[0], comando_picotado, envp);
+		exit(1);
+	}
+	wait(NULL);
+
+	// Fecho no pai
+	close(all_pipes[0]);
+	close(all_pipes[1]);
+}
+
+int main(int argc, char *argv[], char *envp[])
+{
+	char	*retorno_readline;
+	char	**comandos;
+
+	while (42)
+	{
+		retorno_readline = readline("Prompt$ ");
+		comandos = ft_split(retorno_readline, '|');
+
+
+		if (comandos[1] != NULL)
+		{
+			executar_2_comandos(comandos, envp);
+		}
+		else
+		{
+			executar_1_comando(retorno_readline, envp);
+		}
+		printf("-------------\n");
+	}
+	return (0);
+}
+```
+
 # E mais um progresso realizado! 🎊🎊🎊🎊
 
-Com essa parte concluída, já é piossível exeutar comandos separados por pipes! Progresso, progresso, progresso! 🥳🥳🥳
+Com essa parte concluída, já é possível executar comandos separados por pipes! Progresso, progresso, progresso! 🥳🥳🥳
 
 O que resta agora é dar uma respirada e beber uma água. Contemplar o que foi feito faz parte da aprendizagem.
