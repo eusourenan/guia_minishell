@@ -1,6 +1,6 @@
 # Guia do Minishell
 
-## Antes de tudo, PARABÉNS! 🥳🥳
+## Antes de tudo: 🥳🥳 PARABÉNS! 🥳🥳
 Você conseguiu! Metade da trilha foi superada, você chegou na metade do common core. Que feito! Comemore!
 
 ## Sobre este Guia
@@ -18,11 +18,12 @@ Teste os códigos que você encontrar nesse guia. Eles são funcionais, porque n
 Para uma organização de pensamento e busca rápida, este guia está subdividido em:
 
 - 1 - Gerando o prompt na tela e esperando o usuário digitar;
-- 2 - Validações
-- 3 - Separando comandos
-- 4 - Identificando builtins
-- 5 - Preparando comando externo
-- 6 - Pipes
-- 7 - Execução
+- 2 - Estrutura de comandos
+- 3 - Validações
+- 4 - Separando comandos
+- 5 - Identificando builtins
+- 6 - Preparando comando externo
+- 7 - Pipes
+- 8 - Execução
 
 Signals?
