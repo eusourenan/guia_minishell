@@ -10,6 +10,8 @@ Para a parte mandatória, temos que validar 3 itens no input:
 
 ## Aspas
 
+"argumento 1" 'Argumento 2' "Mesmo sendo uma frase grande   esse é o argumento 3"
+
 Podemos validar as aspas simplesmente procurando por seus pares. Para cada aspas que inicia, você tem que encontrar a aspas que termina.
 
 Uma solução possível é:
